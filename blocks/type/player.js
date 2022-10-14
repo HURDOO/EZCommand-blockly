@@ -40,7 +40,7 @@ let blocks = [
         "helpUrl": "",
         "function": function (block) {
             let nickname = block.getFieldValue('uuid');
-            
+
         }
     },
     {
@@ -140,7 +140,6 @@ const TYPE_ENTITY_SELECTOR_MUTATOR = {
         if (this.useDistance) this.useDistanceRange = xmlElement.getAttribute('useDistanceRange') == 'true';
         else this.useDistanceRange = false;
 
-        // this.rebuildShape();
         this.updateShape();
     },
 
@@ -184,23 +183,12 @@ const TYPE_ENTITY_SELECTOR_MUTATOR = {
             console.log(connection)
         }
 
-        /*if (this.useNickname) {
-            containerBlock.setNextStatement(false);
-        }
-
-        if (!this.useNickname) {
-            containerBlock.setNextStatement(true);
-            let connection = containerBlock.nextConnection();
-            // other things
-        }*/
-
         return containerBlock;
     },
     compose: function(containerBlock) {
         console.log('compose');
 
         options = containerBlock.getDescendants(true);
-
         this.useDistance = this.useDistanceRange = false;
 
         for (let i=1;i<options.length;i++) {
@@ -216,78 +204,12 @@ const TYPE_ENTITY_SELECTOR_MUTATOR = {
                     throw new Error('Unknown selector subtype ' + option.type);
             }
         }
-        console.log(this.useDistance)
-
-        /*console.log(containerBlock)
-
-        if (containerBlock.nextConnection) {
-            let clauseBlock = containerBlock.nextConnection.targetBlock();
-            let connections = [null];
-            while (clauseBlock) {
-                if (clauseBlock.isInsertionMarker()) {
-                    clauseBlock = clauseBlock.getNextBlock();
-                    continue;
-                }
-                switch (clauseBlock.type) {
-                    case 'type_entity_selector_distance': {
-                        this.useDistance = true;
-                        this.useDistanceRange = clauseBlock.getFieldValue('range');
-                        connections.push(clauseBlock.statementConnection);
-                        break;
-                    }
-                    default:
-                        throw TypeError('Unknown block type: ' + clauseBlock.type);
-                }
-                clauseBlock = clauseBlock.getNextBlock();
-            }
-        }*/
+        
         this.updateShape();
-        // this.reconnectChildBlocks(connections);
     },
 
-    /*saveConnections: function(containerBlock) {
-        console.log('saveConnections');
-        console.log(containerBlock)
-        if (containerBlock.nextConnection) {
-            let cluaseBlock = containerBlock.nextConnection.targetBlock();
-            while (cluaseBlock) {
-                if (cluaseBlock.isInsertionMarker()) {
-                    clauseBlock = clauseBlock.getNextBlock();
-                    continue;
-                }
-                switch(clauseBlock.type) {
-                    case 'type_player_nickname': {
-                        const nickname = this.getInput('nickname');
-                        clauseBlock.valueConnection = 
-                            nickname && nickname.connection.targetConnection;
-                        break;
-                    }
-                    default:
-                        throw TypeError('Unknown block type: ' + clauseBlock.type);
-                }
-                clauseBlock = clauseBlock.getNextBlock();
-            }
-        }
-    },*/
-
-    /*rebuildShape: function() {
-        const connections = [null];
-        if (this.getInput('nickname')) {
-            const nickname = this.getInput('nickname');
-            connections.push(nickname.connection.targetConnection);
-        }
-        else {
-            // other things
-        }
-        this.updateShape();
-        // this.reconnectChildBlocks(connections)
-    },*/
     updateShape: function() {
         console.log('updateshape');
-        // if (this.getInput('nickname')) {
-        //     this.removeInput('nickname');
-        // }
-        // // remove other things
 
         this.removeAllInputs(this, ['selector', 'distance', 'distance_range']);
 
@@ -322,10 +244,6 @@ const TYPE_ENTITY_SELECTOR_MUTATOR = {
             }
         }
     },
-    /*reconnectChildBlocks: function(connections) {
-        Blockly.Mutator.reconnect(connections[0], this, 'nickname');
-        // @TODO support other things
-    }*/
 
     removeAllInputs: function(block, arr) {
         for (let s of arr) {
