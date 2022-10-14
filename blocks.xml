@@ -8,7 +8,9 @@
     <category name="종류" colour="150">
         <block type="type_player_nickname"></block>
         <block type="type_entity_uuid"></block>
-        <block type="type_entity_selector"></block>
+        <block type="type_entity_selector">
+            <mutation></mutation>
+        </block>
     </category>
 </xml>
 

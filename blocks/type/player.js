@@ -1,87 +1,94 @@
-Blockly.JavaScript['type_player'] = function (block) {
+Blockly.JavaScript['type_player_nickname'] = function (block) {
     var nickname = block.getFieldValue('nickname');
     if(nickname != "") return nickname;
     return '....\n';
 }
 
-Blockly.Blocks['type_player_nickname'] = {
-    init: function() {
-        this.jsonInit(
+let blocks = [
+    {
+        "type": "type_player_nickname",
+        "message0": "플레이어: %1",
+        "args0": [
             {
-                "type": "type_player",
-                "message0": "플레이어: %1",
-                "args0": [
-                    {
-                        'type': 'field_input',
-                        'name': 'nickname',
-                        'text': 'Player'
-                    }
-                ],
-                "output": "player",
-                "colour": 240,
-                "tooltip": "입력된 닉네임의 플레이어를 지정합니다.",
-                "helpUrl": "",
+                'type': 'field_input',
+                'name': 'nickname',
+                'text': 'Player'
             }
-        )
-    }
-}
-
-Blockly.Blocks['type_entity_uuid'] = {
-    init: function() {
-        this.jsonInit(
+        ],
+        "output": "player",
+        "colour": 240,
+        "tooltip": "입력된 닉네임의 플레이어를 지정합니다.",
+        "helpUrl": "",
+        "function": function (block) {
+            let nickname = block.getFieldValue('nickname');
+            return nickname != "" ? nickname : "Player";
+        }
+    },
+    {
+        "type": "type_entity_uuid",
+        "message0": "UUID: %1",
+        "args0": [
             {
-                "type": "type_entity_uuid",
-                "message0": "UUID: %1",
-                "args0": [
-                    {
-                        'type': 'field_input',
-                        'name': 'uuid',
-                        'text': '12345678-1234-1234-1234-123456789012'
-                    }
-                ],
-                "output": "entity",
-                "colour": 240,
-                "tooltip": "입력된 UUID를 가진 엔티티를 지정합니다.",
-                "helpUrl": "",
+                'type': 'field_input',
+                'name': 'uuid',
+                'text': '12345678-1234-1234-1234-123456789012'
             }
-        )
+        ],
+        "output": "entity",
+        "colour": 240,
+        "tooltip": "입력된 UUID를 가진 엔티티를 지정합니다.",
+        "helpUrl": "",
+        "function": function (block) {
+            let nickname = block.getFieldValue('uuid');
+            
+        }
+    },
+    {
+        "type": "type_entity_selector",
+        "message0": "",
+        "args0": [],
+        "output": "entity",
+        "colour": 240,
+        "tooltip": "사용자 지정 선택자를 통해 엔티티를 지정합니다.",
+        "helpUrl": "",
+        "mutator": "type_entity_selector_mutator"
+    },
+    {
+        "type": "type_entity_selector_root",
+        "message0": "선택자 %1",
+        "args0": [
+          {
+            "type": "input_statement",
+            "name": "options"
+          }
+        ],
+        "colour": 230,
+        "tooltip": "사용자 지정 선택자를 통해 엔티티를 지정합니다.",
+        "helpUrl": ""
+    },
+    {
+        "type": "type_entity_selector_distance",
+        "message0": "🎯 거리 ( 범위 %1 )",
+        "args0": [
+          {
+            "type": "field_checkbox",
+            "name": "range",
+            "checked": false
+          }
+        ],
+        "previousStatement": "selector",
+        "nextStatement": "selector",
+        "colour": 230,
+        "tooltip": "특정 거리에 있는 엔티티를 지정합니다.",
+        "helpUrl": ""
     }
-}
+]
 
-Blockly.Blocks['type_entity_selector'] = {
-    init:function () {
-        this.jsonInit(
-            {
-                "type": "type_entity_selector",
-                "message0": "",
-                "args0": [],
-                "output": "entity",
-                "colour": 240,
-                "tooltip": "사용자 지정 선택자를 통해 엔티티를 지정합니다.",
-                "helpUrl": "",
-                "mutator": "type_entity_selector_mutator"
-            }
-        )
-    }
-}
-
-Blockly.Blocks['type_entity_selector_root'] = {
-    init: function() {
-        this.jsonInit(
-            {
-                "type": "type_entity_selector_root",
-                "message0": "선택자 %1",
-                "args0": [
-                  {
-                    "type": "input_statement",
-                    "name": "options"
-                  }
-                ],
-                "colour": 230,
-                "tooltip": "사용자 지정 선택자를 통해 엔티티를 지정합니다.",
-                "helpUrl": ""
-              }
-        )
+for (let block of blocks) {
+    Blockly.Blocks[block.type] = {
+        init: function() {
+            this.jsonInit(block);
+        }
     }
 }
 
@@ -111,29 +118,6 @@ Blockly.Blocks['type_entity_selector_root'] = {
     }
 }*/
 
-Blockly.Blocks['type_entity_selector_distance'] = {
-    init: function() {
-        this.jsonInit(
-            {
-                "type": "type_entity_distance",
-                "message0": "🎯 거리 ( 범위 %1 )",
-                "args0": [
-                  {
-                    "type": "field_checkbox",
-                    "name": "range",
-                    "checked": false
-                  }
-                ],
-                "previousStatement": "selector",
-                "nextStatement": "selector",
-                "colour": 230,
-                "tooltip": "특정 거리에 있는 엔티티를 지정합니다.",
-                "helpUrl": ""
-              }
-        )
-    }
-}
-
 const TYPE_ENTITY_SELECTOR_MUTATOR = {
 
     useDistance: false,
@@ -152,8 +136,8 @@ const TYPE_ENTITY_SELECTOR_MUTATOR = {
     domToMutation: function(xmlElement) {
         console.log('domToMutation');
 
-        this.useDistance = xmlElement.hasAttribute('useDistance');
-        if (this.useDistance) this.useDistanceRange = xmlElement.hasAttribute('useDistanceRange');
+        this.useDistance = xmlElement.getAttribute('useDistance') == 'true';
+        if (this.useDistance) this.useDistanceRange = xmlElement.getAttribute('useDistanceRange') == 'true';
         else this.useDistanceRange = false;
 
         // this.rebuildShape();
@@ -217,6 +201,8 @@ const TYPE_ENTITY_SELECTOR_MUTATOR = {
 
         options = containerBlock.getDescendants(true);
 
+        this.useDistance = this.useDistanceRange = false;
+
         for (let i=1;i<options.length;i++) {
             let option = options[i];
 
@@ -230,6 +216,7 @@ const TYPE_ENTITY_SELECTOR_MUTATOR = {
                     throw new Error('Unknown selector subtype ' + option.type);
             }
         }
+        console.log(this.useDistance)
 
         /*console.log(containerBlock)
 
