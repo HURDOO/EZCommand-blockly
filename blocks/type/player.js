@@ -21,7 +21,7 @@ let blocks = [
         "helpUrl": "",
         "function": function (block) {
             let nickname = block.getFieldValue('nickname');
-            return nickname != "" ? nickname : "Player";
+            return nickname;
         }
     },
     {
@@ -40,7 +40,7 @@ let blocks = [
         "helpUrl": "",
         "function": function (block) {
             let nickname = block.getFieldValue('uuid');
-
+            return nickname;
         }
     },
     {
@@ -51,7 +51,10 @@ let blocks = [
         "colour": 240,
         "tooltip": "사용자 지정 선택자를 통해 엔티티를 지정합니다.",
         "helpUrl": "",
-        "mutator": "type_entity_selector_mutator"
+        "mutator": "type_entity_selector_mutator",
+        "function": function (block) {
+            // @TODO
+        }
     },
     {
         "type": "type_entity_selector_root",
@@ -81,7 +84,16 @@ let blocks = [
         "colour": 230,
         "tooltip": "특정 거리에 있는 엔티티를 지정합니다.",
         "helpUrl": ""
-    }
+    },
+    {
+        "type": "type_entity_selector_name",
+        "message0": "이름",
+        "previousStatement": "selector",
+        "nextStatement": "selector",
+        "colour": 230,
+        "tooltip": "특정 이름을 가진 엔티티를 지정합니다.",
+        "helpUrl": ""
+      }
 ]
 
 for (let block of blocks) {
@@ -122,6 +134,7 @@ const TYPE_ENTITY_SELECTOR_MUTATOR = {
 
     useDistance: false,
     useDistanceRange: false,
+    useName: false,
 
     mutationToDom: function() {
         console.log('mutationToDom');
@@ -129,6 +142,7 @@ const TYPE_ENTITY_SELECTOR_MUTATOR = {
         
         container.setAttribute('useDistance', this.useDistance);
         if (this.useDistance) container.setAttribute('useDistanceRange', this.useDistanceRange);
+        container.setAttribute('useName', this.useName);
 
         return container;
     },
@@ -139,6 +153,7 @@ const TYPE_ENTITY_SELECTOR_MUTATOR = {
         this.useDistance = xmlElement.getAttribute('useDistance') == 'true';
         if (this.useDistance) this.useDistanceRange = xmlElement.getAttribute('useDistanceRange') == 'true';
         else this.useDistanceRange = false;
+        this.useName = xmlElement.getAttribute('useName') == 'true';
 
         this.updateShape();
     },
@@ -149,6 +164,7 @@ const TYPE_ENTITY_SELECTOR_MUTATOR = {
 
         state['useDistance'] = this.useDistance;
         if (this.useDistance) state['useDistanceRange'] = this.useDistanceRange;
+        state['useName'] = this.useName;
 
         console.log(state);
         return state;
@@ -160,6 +176,7 @@ const TYPE_ENTITY_SELECTOR_MUTATOR = {
         this.useDistance = state['useDistance'];
         if (this.useDistance) this.useDistanceRange = state['useDistanceRange'];
         else this.useDistanceRange = false;
+        this.useName = state['useName'];
         
         this.updateShape();
     },
@@ -180,7 +197,12 @@ const TYPE_ENTITY_SELECTOR_MUTATOR = {
             
             connection.connect(distanceBlock.previousConnection);
             connection = distanceBlock.nextConnection;
-            console.log(connection)
+        }
+        if(this.useName) {
+            const nameBlock = workspace.newBlock('type_entity_selector_name');
+            nameBlock.initSvg();
+            connection.connect(nameBlock.previousConnection);
+            connection = nameBlock.nextConnection;
         }
 
         return containerBlock;
@@ -189,7 +211,7 @@ const TYPE_ENTITY_SELECTOR_MUTATOR = {
         console.log('compose');
 
         options = containerBlock.getDescendants(true);
-        this.useDistance = this.useDistanceRange = false;
+        this.useDistance = this.useDistanceRange = this.useName = false;
 
         for (let i=1;i<options.length;i++) {
             let option = options[i];
@@ -199,6 +221,9 @@ const TYPE_ENTITY_SELECTOR_MUTATOR = {
                     this.useDistance = true;
                     let range = option.getFieldValue('range');
                     this.useDistanceRange = range == 'TRUE';
+                    break;
+                case 'type_entity_selector_name':
+                    this.useName = true;
                     break;
                 default:
                     throw new Error('Unknown selector subtype ' + option.type);
@@ -211,7 +236,7 @@ const TYPE_ENTITY_SELECTOR_MUTATOR = {
     updateShape: function() {
         console.log('updateshape');
 
-        this.removeAllInputs(this, ['selector', 'distance', 'distance_range']);
+        this.removeAllInputs(this, ['selector', 'distance', 'distance_range', 'name']);
 
         let input = this.appendDummyInput('selector');
         let field = new Blockly.FieldDropdown([
@@ -227,21 +252,27 @@ const TYPE_ENTITY_SELECTOR_MUTATOR = {
             if (!this.useDistanceRange) {
                 let input = this.appendDummyInput('distance');
                 let field_distance = new Blockly.FieldNumber(5, 0, null, 0); // default, min, max, round
-                let field_label = new Blockly.FieldLabel('블록만큼 떨어져 있음')
-                input.appendField('블록')
+                input.appendField('거리:')
                 input.appendField(field_distance, 'distance');
-                input.appendField('개만큼 떨어져 있음')
+                input.appendField('블록')
             }
             else {
                 let input = this.appendDummyInput('distance_range');
                 let field_from = new Blockly.FieldNumber(5, 0, null, 0);
-                let field_to = new Blockly.FieldNumber(5, 0, null, 0);
-                input.appendField('블록');
+                let field_to = new Blockly.FieldNumber(10, 0, null, 0);
+                input.appendField('거리:');
                 input.appendField(field_from, 'range_from');
                 input.appendField('~');
                 input.appendField(field_to, 'range_to');
-                input.appendField('개만큼 떨어져 있음');
+                input.appendField('블록');
             }
+        }
+
+        if (this.useName) {
+            let input = this.appendDummyInput('name');
+            let field_name = new Blockly.FieldTextInput('Player');
+            input.appendField('이름:');
+            input.appendField(field_name);
         }
     },
 
@@ -252,4 +283,4 @@ const TYPE_ENTITY_SELECTOR_MUTATOR = {
     }
 };
 Blockly.Extensions.registerMutator('type_entity_selector_mutator', TYPE_ENTITY_SELECTOR_MUTATOR, undefined, 
-    ['type_entity_selector_distance'])
+    ['type_entity_selector_distance', 'type_entity_selector_name'])
