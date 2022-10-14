@@ -1,0 +1,23 @@
+<xml id="toolbox" style="display: none">
+    <category name="이벤트" colour="30">
+        <block type="event_onfunction"></block>
+    </category>
+    <category name="세계" colour="120">
+        <block type="world_weather"></block>
+    </category>
+    <category name="종류" colour="150">
+        <block type="type_player_nickname"></block>
+        <block type="type_entity_uuid"></block>
+        <block type="type_entity_selector"></block>
+    </category>
+</xml>
+
+<!--
+
+    <xml xmlns="https://developers.google.com/blockly/xml">
+  <block type="type_player" id=",s,::G?@ze[-/d~$zx^W" x="63" y="88">
+    <mutation useNickname=""></mutation>
+    <field name="nickname">Player</field>
+  </block>
+</xml>
+-->
