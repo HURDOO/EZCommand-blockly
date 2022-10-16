@@ -4,6 +4,18 @@
     </category>
     <category name="세계" colour="120">
         <block type="world_weather"></block>
+        <block type="world_teleport_entity">
+            <value name="from">
+                <shadow type="type_entity_selector_nomutator">
+                    <field name="selector">s</field>
+                </shadow>
+            </value>
+            <value name="to">
+                <shadow type="type_player_nickname">
+                    <field name="name">Player</field>
+                </shadow>
+            </value>
+        </block>
     </category>
     <category name="종류" colour="150">
         <block type="type_player_nickname"></block>

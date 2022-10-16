@@ -1,13 +1,7 @@
-Blockly.JavaScript['type_player_nickname'] = function (block) {
-    var nickname = block.getFieldValue('nickname');
-    if(nickname != "") return nickname;
-    return '....\n';
-}
-
-let blocks = [
+EZCommand.registerBlocks([
     {
         "type": "type_player_nickname",
-        "message0": "플레이어: %1",
+        "message0": "%1",
         "args0": [
             {
                 'type': 'field_input',
@@ -26,7 +20,7 @@ let blocks = [
     },
     {
         "type": "type_entity_uuid",
-        "message0": "UUID: %1",
+        "message0": "UUID %1",
         "args0": [
             {
                 'type': 'field_input',
@@ -47,7 +41,7 @@ let blocks = [
         "type": "type_entity_selector",
         "message0": "",
         "args0": [],
-        "output": "entity",
+        "output": 'entity',
         "colour": 240,
         "tooltip": "사용자 지정 선택자를 통해 엔티티를 지정합니다.",
         "helpUrl": "",
@@ -112,17 +106,33 @@ let blocks = [
         "colour": 230,
         "tooltip": "특정 이름을 가진 엔티티를 지정합니다.",
         "helpUrl": ""
-      }
-]
-
-for (let block of blocks) {
-    Blockly.Blocks[block.type] = {
-        init: function() {
-            this.jsonInit(block);
+    },
+    {
+        "type": "type_entity_selector_nomutator",
+        "message0": "%1",
+        "args0": [
+          {
+            "type": "field_dropdown",
+            "name": "selector",
+            "options": [
+                ['🎯 가까운 플레이어', 'p'],
+                ['🚀 랜덤 플레이어', 'r'],
+                ['🐵 모든 엔티티', 'e'],
+                ['👨‍👩‍👧‍👦 모든 플레이어', 'a'],
+                ['🚩 자기 자신', 's'],
+            ]
+          }
+        ],
+        "output": "entity",
+        "colour": 230,
+        "tooltip": "",
+        "helpUrl": "",
+        "function": (block) => {
+            let selector = block.getFieldValue('selector');
+            return '@' + selector;
         }
     }
-    Blockly.JavaScript[block.type] = block.function;
-}
+])
 
 /*Blockly.Blocks['type_player_mode'] = {
     init: function() {

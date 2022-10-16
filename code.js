@@ -16,6 +16,50 @@ xml.onreadystatechange = () => {
 xml.open('GET', 'blocks.xml', true);
 xml.send(null);
 
+// EZCommand
+
+const EZCommand = {
+
+  registerBlock: function (block) {
+
+    if (block.previousStatement) block.previousStatement = checkAppendMultiple(block.previousStatement);
+    if (block.nextStatement) block.nextStatement = checkAppendMultiple(block.nextStatement);
+    if (block.args0) {
+      for (let i=0;i<block.args0.length;i++) {
+        let arg = block.args0[i];
+        if(arg.check) arg.check = checkAppendMultiple(arg.check);
+        block.args0[i] = arg;
+      }
+    }
+
+    console.log(block);
+
+    Blockly.Blocks[block.type] = {
+      init: function() {
+          this.jsonInit(block);
+      }
+    }
+    Blockly.JavaScript[block.type] = block.function;
+  },
+
+  registerBlocks: function(arr) {
+    for (let block of arr) {
+      this.registerBlock(block);
+    }
+  }
+
+}
+
+function checkAppendMultiple(check) {
+  switch(check) {
+    case "entity":
+      return ['player', 'mob', 'entity'];
+    case "mob":
+      return ['player', 'mob'];
+    default:
+      return check;
+  }
+}
 
 /**
  * @license
