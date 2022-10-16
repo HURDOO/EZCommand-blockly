@@ -53,7 +53,26 @@ let blocks = [
         "helpUrl": "",
         "mutator": "type_entity_selector_mutator",
         "function": function (block) {
-            // @TODO
+            let selector = block.getFieldValue('selector');
+            let command = '@' + selector + '[';
+            
+            let distance = block.getFieldValue('distance');
+            if (distance) command += 'distance=' + distance + ',';
+            else {
+                let range_from = block.getFieldValue('range_from');
+                if (range_from) {
+                    let range_to = block.getFieldValue('range_to');
+                    command += 'distance=' + range_from + '..' + range_to + ',';
+                }
+            }
+            
+            let name = block.getFieldValue('name')
+            if (name) command += 'name=' + name + ',';
+            
+            if(command.length == 3) command = command.substring(0,2);
+            else command = command.substring(0, command.length-1) + ']';
+            
+            return command;
         }
     },
     {
@@ -102,6 +121,7 @@ for (let block of blocks) {
             this.jsonInit(block);
         }
     }
+    Blockly.JavaScript[block.type] = block.function;
 }
 
 /*Blockly.Blocks['type_player_mode'] = {
@@ -272,7 +292,7 @@ const TYPE_ENTITY_SELECTOR_MUTATOR = {
             let input = this.appendDummyInput('name');
             let field_name = new Blockly.FieldTextInput('Player');
             input.appendField('이름:');
-            input.appendField(field_name);
+            input.appendField(field_name, 'name');
         }
     },
 
