@@ -39,8 +39,20 @@ EZCommand.registerBlocks([
     },
     {
         "type": "type_entity_selector",
-        "message0": "",
-        "args0": [],
+        "message0": "%1",
+        "args0": [
+            {
+              "type": "field_dropdown",
+              "name": "selector",
+              "options": [
+                ['🎯 가까운 플레이어', 'p'],
+                ['🚀 랜덤 플레이어', 'r'],
+                ['🐵 모든 엔티티', 'e'],
+                ['👨‍👩‍👧‍👦 모든 플레이어', 'a'],
+                ['🚩 자기 자신', 's'],
+              ]
+            }
+          ],
         "output": 'entity',
         "colour": 240,
         "tooltip": "사용자 지정 선택자를 통해 엔티티를 지정합니다.",
@@ -265,52 +277,48 @@ const TYPE_ENTITY_SELECTOR_MUTATOR = {
 
     updateShape: function() {
         console.log('updateshape');
-
-        this.removeAllInputs(this, ['selector', 'distance', 'distance_range', 'name']);
-
-        let input = this.appendDummyInput('selector');
-        let field = new Blockly.FieldDropdown([
-            ['🎯 가까운 플레이어', 'p'],
-            ['🚀 랜덤 플레이어', 'r'],
-            ['🐵 모든 엔티티', 'e'],
-            ['👨‍👩‍👧‍👦 모든 플레이어', 'a'],
-            ['🚩 자기 자신', 's'],
-        ]);
-        input.appendField(field, 'selector');
         
         if (this.useDistance) {
-            if (!this.useDistanceRange) {
-                let input = this.appendDummyInput('distance');
-                let field_distance = new Blockly.FieldNumber(5, 0, null, 0); // default, min, max, round
-                input.appendField('거리:')
-                input.appendField(field_distance, 'distance');
-                input.appendField('블록')
+            if (!this.useDistanceRange) { // distance
+                if (!this.getInput('distance')) {
+                    if (this.getInput('distance_range')) this.removeInput('distance_range');
+                    let input = this.appendDummyInput('distance');
+
+                    let field_distance = new Blockly.FieldNumber(5, 0, null, 0); // default, min, max, round
+                    
+                    input.appendField('거리:')
+                    input.appendField(field_distance, 'distance');
+                    input.appendField('블록')
+                }
             }
-            else {
-                let input = this.appendDummyInput('distance_range');
-                let field_from = new Blockly.FieldNumber(5, 0, null, 0);
-                let field_to = new Blockly.FieldNumber(10, 0, null, 0);
-                input.appendField('거리:');
-                input.appendField(field_from, 'range_from');
-                input.appendField('~');
-                input.appendField(field_to, 'range_to');
-                input.appendField('블록');
+            else { // distance_range
+                if (!this.getInput('distance_range')) {
+                    if (this.getInput('distance')) this.removeInput('distance');
+                    let input = this.appendDummyInput('distance_range');
+
+                    let field_from = new Blockly.FieldNumber(5, 0, null, 0);
+                    let field_to = new Blockly.FieldNumber(10, 0, null, 0);
+
+                    input.appendField('거리:');
+                    input.appendField(field_from, 'range_from');
+                    input.appendField('~');
+                    input.appendField(field_to, 'range_to');
+                    input.appendField('블록');
+                }
             }
         }
+        else if (this.getInput('distance')) this.removeInput('distance');
 
         if (this.useName) {
-            let input = this.appendDummyInput('name');
-            let field_name = new Blockly.FieldTextInput('Player');
-            input.appendField('이름:');
-            input.appendField(field_name, 'name');
+            if (!this.getInput('name')) {
+                let input = this.appendDummyInput('name');
+                let field_name = new Blockly.FieldTextInput('Player');
+                input.appendField('이름:');
+                input.appendField(field_name, 'name');
+            }
         }
+        else if(this.getInput('name')) this.removeInput('name');
     },
-
-    removeAllInputs: function(block, arr) {
-        for (let s of arr) {
-            if(block.getInput(s)) block.removeInput(s);
-        }
-    }
 };
 Blockly.Extensions.registerMutator('type_entity_selector_mutator', TYPE_ENTITY_SELECTOR_MUTATOR, undefined, 
     ['type_entity_selector_distance', 'type_entity_selector_name'])

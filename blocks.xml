@@ -16,6 +16,16 @@
                 </shadow>
             </value>
         </block>
+        <block type="world_teleport_pos">
+            <value name="from">
+                <shadow type="type_entity_selector_nomutator">
+                    <field name="selector">s</field>
+                </shadow>
+            </value>
+            <value name="to">
+                <shadow type="type_pos"></shadow>
+            </value>
+        </block>
     </category>
     <category name="종류" colour="150">
         <block type="type_player_nickname"></block>
@@ -23,6 +33,7 @@
         <block type="type_entity_selector">
             <mutation></mutation>
         </block>
+        <block type="type_pos"></block>
     </category>
 </xml>
 
