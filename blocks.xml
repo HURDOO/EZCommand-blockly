@@ -28,7 +28,19 @@
             <mutation direction='KEEP_ORIGINAL'></mutation>
         </block>
     </category>
-    <category name="종류" colour="150">
+    <category name="서버" colour="250">
+        <block type="server_ban">
+            <value name="player">
+                <shadow type="type_player_nickname"></shadow>
+            </value>
+        </block>
+        <block type="server_pardon">
+            <value name="player">
+                <shadow type="type_player_nickname"></shadow>
+            </value>
+        </block>
+    </category>
+    <category name="종류" colour="200">
         <block type="type_player_nickname"></block>
         <block type="type_entity_uuid"></block>
         <block type="type_entity_selector">
