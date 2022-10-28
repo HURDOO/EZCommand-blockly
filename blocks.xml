@@ -25,6 +25,7 @@
             <value name="to">
                 <shadow type="type_pos"></shadow>
             </value>
+            <mutation direction='KEEP_ORIGINAL'></mutation>
         </block>
     </category>
     <category name="종류" colour="150">

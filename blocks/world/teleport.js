@@ -23,14 +23,14 @@ EZCommand.registerBlocks([
             let command = 'tp '
             let from = Blockly.JavaScript.blockToCode(block.getInputTargetBlock('from'), true);
             let to = Blockly.JavaScript.blockToCode(block.getInputTargetBlock('to'));
-            if(from != '@s') command += from + ' ';
+            if(from !== '@s') command += from + ' ';
             command += to;
             return command;
         }
     },
     {
         "type": "world_teleport_pos",
-        "message0": "%1 이(가) %2 로 이동하기",
+        "message0": "%1 이(가) %2",
         "args0": [
           {
             "type": "input_value",
@@ -51,7 +51,35 @@ EZCommand.registerBlocks([
         "helpUrl": "",
         "mutator": "world_teleport_pos_mutator",
         "function": (block) => {
-            return "";
+            let command = 'tp '
+            let from = Blockly.JavaScript.blockToCode(block.getInputTargetBlock('from'), true);
+            let to = Blockly.JavaScript.blockToCode(block.getInputTargetBlock('to'), true);
+
+            if (from !== '@s') command += from + ' ';
+            command += to;
+            
+            switch (block.direction) {
+                case block.DIRECTION_MODE.KEEP_ORIGINAL:
+                    break;
+                case block.DIRECTION_MODE.DEFINE_FACING: {
+                    let x = block.getFieldValue('direction_x');
+                    let y = block.getFieldValue('direction_y');
+
+                    command += ' ' + x + ' ' + y;
+                    break;
+                }
+                case block.DIRECTION_MODE.DEFINE_POS: {
+                    let pos = Blockly.JavaScript.blockToCode(block.getInputTargetBlock('pos'), true);
+                    command += ' facing ' + pos;
+                    break;
+                }
+                case block.DIRECTION_MODE.DEFINE_ENTITY: {
+                    let entity = Blockly.JavaScript.blockToCode(block.getInputTargetBlock('entity'), true);
+                    command += ' facing entity ' + entity;
+                    break;
+                }
+            }
+            return command;
         }
     },
     {
@@ -131,13 +159,27 @@ const WORLD_TELEPORT_POS_MUTATOR = {
 
     updateShape: function() {
         console.log('updateShape');
+        
+        if (this.direction == this.DIRECTION_MODE.KEEP_ORIGINAL) {
+            if (!this.getInput('origin')) {
+                this.removeAllDirectionInputs();
+                if (this.getInput('change')) this.removeInput('change');
 
-        console.log(this.direction);
+                let input = this.appendDummyInput('origin');
+                input.appendField('로 이동하기');
+            }
+        }
+        else {
+            if (!this.getInput('change')) {
+                this.removeAllDirectionInputs();
+                if (this.getInput('origin')) this.removeInput('origin');
+
+                let input = this.appendDummyInput('change');
+                input.appendField('로 이동하고');
+            }
+        }
 
         switch(this.direction) {
-            case this.DIRECTION_MODE.KEEP_ORIGINAL:
-                this.removeAllDirectionInputs();
-                break;
 
             case this.DIRECTION_MODE.DEFINE_FACING: {
                 if (this.getInput('facing')) break;
@@ -160,7 +202,9 @@ const WORLD_TELEPORT_POS_MUTATOR = {
                 this.removeAllDirectionInputs();
 
                 let input_pos = this.appendValueInput('pos');
-                input_pos.setCheck('pos')
+                input_pos.setCheck('pos');
+                input_pos.setShadowDom(
+                    Blockly.Xml.textToDom('<xml><shadow type="type_pos"></shadow></xml>').children[0]);
                 let input_label = this.appendDummyInput('label');
 
                 input_label.appendField('을(를) 향해 바라보기')
@@ -173,6 +217,8 @@ const WORLD_TELEPORT_POS_MUTATOR = {
                 
                 let input_entity = this.appendValueInput('entity');
                 input_entity.setCheck('entity');
+                input_entity.setShadowDom(
+                    Blockly.Xml.textToDom('<xml><shadow type="type_entity_selector_nomutator"></shadow></xml>').children[0]);
                 let input_label = this.appendDummyInput('label');
 
                 input_label.appendField('을(를) 향해 바라보기');
