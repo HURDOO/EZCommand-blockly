@@ -111,38 +111,30 @@ const WORLD_TELEPORT_POS_MUTATOR = {
         console.log('mutationToDom');
 
         const container = Blockly.utils.xml.createElement('mutation');
-        container.setAttribute('direction', this.useDirection);
+        container.setAttribute('direction', this.DIRECTION_MODE.validate(this.direction));
         
         return container;
     },
 
     domToMutation: function(xmlElement) {
-        console.log('domToMutation');
-        
         this.direction = this.DIRECTION_MODE.validate(xmlElement.getAttribute('direction'));
         this.updateShape();
     },
 
     saveExtraState: function() {
-        console.log('saveExtraState');
-
         state = {
-            'direction': this.direction
+            'direction': this.DIRECTION_MODE.validate(this.direction)
         };
 
         return state;
     },
 
     loadExtraState: function(state) {
-        console.log('loadExtraState');
-        
         this.direction = this.DIRECTION_MODE.validate(state['direction']);
         this.updateShape();
     },
 
     decompose: function(workspace) {
-        console.log('decompose');
-
         const containerBlock = workspace.newBlock('world_teleport_pos_direction');
         containerBlock.initSvg();
         containerBlock.setFieldValue(this.direction, 'direction');
@@ -151,15 +143,11 @@ const WORLD_TELEPORT_POS_MUTATOR = {
     },
 
     compose: function (containerBlock) {
-        console.log('compose');
-
         this.direction = containerBlock.getFieldValue('direction');
         this.updateShape();
     },
 
     updateShape: function() {
-        console.log('updateShape');
-        
         if (this.direction == this.DIRECTION_MODE.KEEP_ORIGINAL) {
             if (!this.getInput('origin')) {
                 this.removeAllDirectionInputs();
@@ -242,6 +230,7 @@ const WORLD_TELEPORT_POS_MUTATOR = {
                     return str.toUpperCase();
                 case null:
                 case undefined:
+                case "undefined":
                     return 'KEEP_ORIGINAL';
                 default:
                     throw new Error('Unknown direction_mode: ' + str);
