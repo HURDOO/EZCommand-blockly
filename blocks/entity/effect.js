@@ -1,7 +1,7 @@
 EZCommand.registerBlocks([
     {
         "type": "entity_effect",
-        "message0": "%1 %2 효과를 %3 초 동안 %4 %5 에게 부여하기 ( %6 입자 표시)",
+        "message0": "✨%5 %1 %2 효과를 %3 초 동안 %4 에게 부여하기",
         "args0": [
           {
             "type": "field_dropdown",
@@ -57,16 +57,13 @@ EZCommand.registerBlocks([
             "max": 2100000000
           },
           {
-            "type": "input_dummy"
-          },
-          {
             "type": "input_value",
-            "name": "NAME",
+            "name": "target",
             "check": "entity"
           },
           {
             "type": "field_checkbox",
-            "name": "NAME",
+            "name": "particle",
             "checked": true
           }
         ],

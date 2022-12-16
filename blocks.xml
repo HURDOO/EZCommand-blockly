@@ -3,7 +3,13 @@
         <block type="event_onfunction"></block>
     </category>
     <category name="엔티티" colour="80">
-        <block type="entity_effect"></block>
+        <block type="entity_effect">
+        <value name="target">
+                <shadow type="type_entity_selector_nomutator">
+                    <field name="selector">s</field>
+                </shadow>
+            </value>
+        </block>
     </category>
     <category name="세계" colour="120">
         <block type="world_weather"></block>
