@@ -13,7 +13,11 @@ EZCommand.registerBlocks([
         "nextStatement": null,
         "colour": 345,
         "tooltip": "플레이어를 서버에서 차단하여 더 이상 서버에 접속할 수 없도록 합니다.",
-        "helpUrl": ""
+        "helpUrl": "",
+        "function": (block) => {
+          let player = block.getFieldValue('player');
+          return 'ban ' + player;
+        }
     },
     {
         "type": "server_pardon",
@@ -29,6 +33,10 @@ EZCommand.registerBlocks([
         "nextStatement": null,
         "colour": 120,
         "tooltip": "서버에서 차단한 플레이어의 차단을 해제하여 서버에 다시 접속할 수 있게 합니다.",
-        "helpUrl": ""
+        "helpUrl": "",
+        "function": (block) => {
+          let player = block.getFieldValue('player');
+          return 'pardon ' + player;
+        }
       }
 ])
