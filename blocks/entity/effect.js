@@ -71,6 +71,15 @@ EZCommand.registerBlocks([
         "nextStatement": null,
         "colour": 230,
         "tooltip": "",
-        "helpUrl": ""
+        "helpUrl": "",
+        "function": function(block) {
+          return "effect "
+          + Blockly.JavaScript.blockToCode(block.getInputTargetBlock('target'), true) + " "
+          + "minecraft:" + block.getFieldValue('effect') + " "
+          + block.getFieldValue('seconds') + " "
+          + block.getFieldValue('amplifier')
+          + (block.getFieldValue('particle') == 'TRUE' ? " true" : "")
+          ;
+        }
     }
 ])
