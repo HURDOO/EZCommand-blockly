@@ -493,7 +493,13 @@ Code.init = function() {
        toolbox: toolboxXml,
        zoom:
            {controls: true,
-            wheel: true}
+            wheel: true},
+       theme: Blockly.Theme.defineTheme('ezcommand-theme', {
+        'base': Blockly.Themes.Classic,
+        'fontStyle': {
+          'family': 'LINESeedKR-Bd, Sans Serif'
+        }
+       })
       });
 
   // Add to reserved word list: Local variables in execution environment (runJS)
