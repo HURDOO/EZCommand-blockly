@@ -33,8 +33,8 @@ Blockly.Blocks['world_weather'] = {
                 "nextStatement": null,
                 "colour": 230,
                 "tooltip": "날씨를 변경합니다.",
-                "helpUrl": "http://ezcommand.kro.kr"
-              }
+                "helpUrl": "https://ezcommand.kro.kr"
+            }
         )
     }
 }
